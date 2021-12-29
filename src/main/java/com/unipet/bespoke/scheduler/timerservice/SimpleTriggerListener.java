@@ -3,9 +3,11 @@ package com.unipet.bespoke.scheduler.timerservice;
 import com.unipet.bespoke.scheduler.repository.jpa.SchedulerRepository;
 import com.unipet.bespoke.scheduler.repository.schema.SchedulerJobInfo;
 import com.unipet.bespoke.scheduler.service.SchedulerJobService;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.BeanUtils;
 
+@Slf4j
 public class SimpleTriggerListener implements TriggerListener {
   private final SchedulerJobService schedulerJobService;
   private final SchedulerRepository schedulerRepository;
@@ -63,17 +65,19 @@ public class SimpleTriggerListener implements TriggerListener {
    */
   @Override
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
+
+    log.error("{} misfired.",trigger.getKey());
     return false;
   }
 
   @Override
   public void triggerMisfired(Trigger trigger) {
-
+    log.error("{} misfired.",trigger.getKey());
   }
 
   @Override
   public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
-
+    log.error("{} misfired.",trigger.getKey());
   }
 }
 
