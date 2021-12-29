@@ -66,7 +66,7 @@ public class SimpleTriggerListener implements TriggerListener {
   @Override
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
 
-    log.error("{} misfired.",trigger.getKey());
+    log.info("{} executed.",trigger.getKey());
     return false;
   }
 
@@ -77,7 +77,7 @@ public class SimpleTriggerListener implements TriggerListener {
 
   @Override
   public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
-    log.error("{} misfired.",trigger.getKey());
+    log.info("{} completed.",trigger.getKey());
   }
 }
 

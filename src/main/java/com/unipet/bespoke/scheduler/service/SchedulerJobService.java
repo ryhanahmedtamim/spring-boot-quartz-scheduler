@@ -21,6 +21,9 @@ import org.quartz.SchedulerMetaData;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.quartz.core.QuartzScheduler;
+import org.quartz.core.QuartzSchedulerResources;
+import org.quartz.impl.StdScheduler;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +62,7 @@ public class SchedulerJobService {
   @PostConstruct
   private void init() throws SchedulerException {
     scheduler = schedulerFactoryBean.getScheduler();
+    log.info("scheduler name : {}", scheduler.getSchedulerName());
     scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener(this, schedulerRepository));
     scheduler.start();
   }
@@ -179,7 +183,7 @@ public class SchedulerJobService {
               jobInfo.getCronExpression(), SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
         } else {
           trigger = scheduleCreator.createSimpleTrigger((Class<? extends QuartzJobBean>) Class.forName(jobInfo.getJobClass()), jobInfo.getStartDate(),
-              jobInfo.getRepeatTime(), SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW, jobInfo.getTotalTriggerCount());
+              jobInfo.getRepeatTime(), SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW, jobInfo.getTotalTriggerLimit());
         }
         scheduler.scheduleJob(jobDetail, trigger);
         jobInfo.setJobStatus(JobStatus.SCHEDULED.name());

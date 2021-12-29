@@ -6,8 +6,22 @@ spring:
     url: jdbc:mysql://localhost:3306/QUARTZ_SCHEMA
     username: tamim
     password: 1234
-    quartz:
-      job-store-type=jdbc
+  quartz:
+    scheduler-name: quartzSchedulernot work anymore
+    jobStoreType: jdbc
+    startup-delay: PT10S
+    wait-for-jobs-to-complete-on-shutdown: true
+    properties:
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.scheduler.jmx.export: true
+      org.quartz.threadPool.threadCount: 15
+      org.quartz.threadPool.threadPriority: 5
+      org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
+      org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread: true
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.tablePrefix: QRTZ_
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.clusterCheckinInterval: 1000
   jpa:
     show-sql: true
     hibernate:
@@ -16,4 +30,4 @@ spring:
 debug: false
 using:
   spring:
-    schedulerFactory=true
+    schedulerFactory: true
