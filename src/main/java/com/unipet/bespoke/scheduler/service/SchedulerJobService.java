@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.unipet.bespoke.scheduler.component.JobScheduleCreator;
 import com.unipet.bespoke.scheduler.dmain.CustomJobDetails;
 import com.unipet.bespoke.scheduler.dmain.JobStatus;
+import com.unipet.bespoke.scheduler.dmain.TriggerDetails;
 import com.unipet.bespoke.scheduler.repository.schema.SchedulerJobInfo;
 import com.unipet.bespoke.scheduler.jobs.SampleCronJob;
 import com.unipet.bespoke.scheduler.jobs.SimpleJob;
@@ -21,6 +22,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -33,6 +35,7 @@ import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 @Slf4j
 @Transactional
@@ -58,6 +61,15 @@ public class SchedulerJobService {
     scheduler = schedulerFactoryBean.getScheduler();
     scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener(this, schedulerRepository));
     scheduler.start();
+  }
+
+  @PreDestroy
+  public void preDestroy() {
+    try {
+      scheduler.shutdown();
+    } catch (SchedulerException e) {
+      log.error(e.getMessage(), e);
+    }
   }
 
   public SchedulerMetaData getMetaData() throws SchedulerException {
@@ -193,7 +205,9 @@ public class SchedulerJobService {
           SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW, jobInfo.getTotalTriggerCount());
     }
     try {
-      schedulerFactoryBean.getScheduler().rescheduleJob(TriggerKey.triggerKey(jobInfo.getJobName()), newTrigger);
+      var jobClassArray = jobInfo.getJobClass().split("\\.");
+      var jobClassName = jobClassArray[jobClassArray.length-1];
+      scheduler.rescheduleJob(TriggerKey.triggerKey(jobClassName), newTrigger);
       jobInfo.setJobStatus(JobStatus.EDITED_AND_SCHEDULED.name());
       schedulerRepository.save(jobInfo);
       log.info(">>>>> jobName = [" + jobInfo.getJobName() + "]" + " updated and scheduled.");
@@ -249,6 +263,22 @@ public class SchedulerJobService {
 
   public Trigger getTrigger(TriggerKey triggerKey) throws SchedulerException {
     return scheduler.getTrigger(triggerKey);
+  }
+
+  public List<TriggerDetails> getAllTrigger() throws SchedulerException {
+    return scheduler.getTriggerKeys(GroupMatcher.anyGroup()).stream().map(tKey->{
+      try {
+        var tempTrigger = scheduler.getTrigger(tKey);
+        var triggerDetails = new TriggerDetails();
+        BeanUtils.copyProperties(tempTrigger, triggerDetails);
+        triggerDetails.setJobDataMap(tempTrigger.getJobDataMap());
+        triggerDetails.setCornEx(((CronTriggerImpl)tempTrigger).getCronExpression());
+        return triggerDetails;
+      } catch (SchedulerException e) {
+        e.printStackTrace();
+        return null;
+      }
+    }).filter(Objects::nonNull).collect(Collectors.toList());
   }
 
 }
