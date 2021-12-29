@@ -38,7 +38,7 @@ public class SampleCronJob extends QuartzJobBean {
     IntStream.range(0, 5).forEach(i -> {
       log.info("Counting - {}", i);
       try {
-        Thread.sleep(10000);
+        Thread.sleep(1000);
       } catch (InterruptedException e) {
         log.error(e.getMessage(), e);
       }
