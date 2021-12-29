@@ -1,0 +1,19 @@
+
+server:
+  port: 5077
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/QUARTZ_SCHEMA
+    username: tamim
+    password: 1234
+    quartz:
+      job-store-type=jdbc
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+debug: false
+using:
+  spring:
+    schedulerFactory=true
