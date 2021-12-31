@@ -36,7 +36,7 @@ public class SimpleTriggerListener implements TriggerListener {
       BeanUtils.copyProperties(tempInfo, info);
       jobGroup = info.getJobGroup();
       jobName = info.getJobName();
-      info = schedulerRepository.findByJobName(jobName);
+      info = schedulerRepository.findByJobNameAndDeletedIsFalse(jobName);
 
       if(info.getCronJob()){
         info.setRemainingFireCount(-1);

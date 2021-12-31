@@ -27,7 +27,7 @@ public class SampleCronJob extends QuartzJobBean {
     authService.clientLogin();
     log.info("SampleCronJob Start................");
     var jobName = context.getJobDetail().getKey().getName();
-    var job = schedulerRepository.findByJobName(jobName);
+    var job = schedulerRepository.findByJobNameAndDeletedIsFalse(jobName);
     log.info("SampleCronJob End................");
     if(job!=null){
       job.setTotalTriggerCount(job.getTotalTriggerCount() != null ? job.getTotalTriggerCount() + 1: 1);

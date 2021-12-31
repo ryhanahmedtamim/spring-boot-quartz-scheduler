@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SchedulerRepository extends JpaRepository<SchedulerJobInfo, Long> {
 
-  SchedulerJobInfo findByJobName(String jobName);
+  SchedulerJobInfo findByJobNameAndDeletedIsFalse(String jobName);
 
 }

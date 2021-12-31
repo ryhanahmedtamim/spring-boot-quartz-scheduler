@@ -2,7 +2,7 @@ package com.ryhan.test.scheduler.controller;
 
 import java.util.List;
 
-import com.ryhan.test.scheduler.dmain.NewJobRequest;
+import com.ryhan.test.scheduler.dmain.JobRequest;
 import com.ryhan.test.scheduler.service.SchedulerJobService;
 import com.ryhan.test.scheduler.dmain.CustomJobDetails;
 import com.ryhan.test.scheduler.dmain.Message;
@@ -25,7 +25,7 @@ public class JobController {
   private final SchedulerJobService scheduleJobService;
 
   @PostMapping(value = "/add-schedule")
-  public Object save(@RequestBody @Validated NewJobRequest job) {
+  public Object save(@RequestBody @Validated JobRequest job) {
     log.info("params, job = {}", job);
     Message message = Message.failure();
     try {
@@ -38,7 +38,7 @@ public class JobController {
     return message;
   }
   @PutMapping(value = "/update-schedule")
-  public Object update(@RequestBody @Validated  NewJobRequest job) {
+  public Object update(@RequestBody @Validated JobRequest job) {
     log.info("params, job = {}", job);
     Message message = Message.failure();
     try {

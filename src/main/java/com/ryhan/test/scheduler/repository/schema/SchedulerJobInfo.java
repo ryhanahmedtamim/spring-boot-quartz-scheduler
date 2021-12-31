@@ -38,4 +38,5 @@ public class SchedulerJobInfo implements Serializable {
   private Integer totalTriggerCount = 0;
   private String jobDescription;
   private int remainingFireCount = -1;
+  private Date lastTriggerTime;
 }

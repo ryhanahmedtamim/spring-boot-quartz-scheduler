@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.ryhan.test.scheduler.dmain.NewJobRequest;
+import com.ryhan.test.scheduler.dmain.JobRequest;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -23,13 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 public class JobScheduleCreator {
 
   public JobDetail createJob(Class<? extends QuartzJobBean> jobClass, boolean isDurable,
-                             ApplicationContext context, NewJobRequest jobInfo) {
+                             ApplicationContext context, JobRequest jobInfo) {
     JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
     factoryBean.setJobClass(jobClass);
     factoryBean.setDurability(isDurable);
     factoryBean.setApplicationContext(context);
-    factoryBean.setName(jobInfo.getJobName());
-    factoryBean.setGroup(jobInfo.getJobGroup());
+    factoryBean.setName(jobClass.getSimpleName());
+    factoryBean.setGroup(jobClass.getSimpleName());
     factoryBean.setDescription(jobInfo.getJobDescription());
     // set job data map
     JobDataMap jobDataMap = new JobDataMap();
@@ -42,6 +42,7 @@ public class JobScheduleCreator {
   public CronTrigger createCronTrigger(Class<? extends QuartzJobBean> jobClass, Date startTime, String cronExpression, int misFireInstruction, TimeZone timeZone) {
     CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
     factoryBean.setName(jobClass.getSimpleName());
+    factoryBean.setGroup(jobClass.getSimpleName());
     factoryBean.setStartTime(startTime);
     factoryBean.setCronExpression(cronExpression);
     factoryBean.setMisfireInstruction(misFireInstruction);
@@ -57,6 +58,7 @@ public class JobScheduleCreator {
   public SimpleTrigger createSimpleTrigger(Class<? extends QuartzJobBean> jobClass, Date startTime, Long repeatTime, int misFireInstruction, int totalTriggerCount) {
     SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
     factoryBean.setName(jobClass.getSimpleName());
+    factoryBean.setGroup(jobClass.getSimpleName());
     factoryBean.setStartTime(startTime);
     factoryBean.setRepeatInterval(repeatTime);
     factoryBean.setRepeatCount(totalTriggerCount);

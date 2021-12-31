@@ -28,7 +28,7 @@ public class SimpleJob extends QuartzJobBean {
     });
     log.info("SimpleJob End................");
     var jobName = context.getJobDetail().getKey().getName();
-    var job = schedulerRepository.findByJobName(jobName);
+    var job = schedulerRepository.findByJobNameAndDeletedIsFalse(jobName);
     if(job!=null){
       job.setTotalTriggerCount(job.getTotalTriggerCount() != null ? job.getTotalTriggerCount() + 1: 1);
       job.setRemainingFireCount(job.getTotalTriggerLimit() - job.getTotalTriggerCount());

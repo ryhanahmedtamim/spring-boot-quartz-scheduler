@@ -14,14 +14,12 @@ import java.util.TimeZone;
 @AllArgsConstructor
 @Setter
 @Getter
-public class NewJobRequest implements Serializable {
+public class JobRequest implements Serializable {
   private Long jobId;
-
-  @NotNull
   private String jobName;
-  @NotNull
   private String jobGroup;
   private String jobStatus;
+
   @NotNull
   private SchedulerJobClass jobClass;
   private String cronExpression;
@@ -36,4 +34,5 @@ public class NewJobRequest implements Serializable {
   private Integer totalTriggerCount = 0;
   private String jobDescription;
   private int remainingFireCount = -1;
+  private Date lastTriggerTime;
 }
